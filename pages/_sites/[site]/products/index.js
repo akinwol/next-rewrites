@@ -72,7 +72,7 @@ export default function Products(props) {
               <p className="text-l font-bold">{p.name}</p>
               <img className="mt-2 h-28 w-full" src={p.assets[0]?p.assets[0].url : "" }></img>
               <p className="mt-2"> {p.price.formatted_with_symbol}</p>
-              <Link className="mr-2.5" href={`/products/${p.permalink}/${p.name.split(' ').join('-')}`}>
+              <Link className="mr-2.5" href={`/product/${p.permalink}/${p.name.split(' ').join('-')}`}>
               <button className="mt-2 border-2 p-3 bg-black text-white rounded-full"> 
               Details
               </button>
