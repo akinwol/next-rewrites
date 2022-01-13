@@ -109,7 +109,8 @@ export async function getStaticProps(props) {
   const { params: { site, slug } } = props
   console.log({ props, slug })
   // check if site is a custom domain or a subdomain
-  const customDomain = (site.includes(process.env.ROOT_URL) || site.includes(".")) ? false : true
+  // const customDomain = (site.includes(process.env.ROOT_URL) || site.includes(".")) ? false : true
+  const customDomain = site.includes(".") ? true : false //site.includes(process.env.ROOT_URL) 
   console.log({ customDomain })
 
   // fetch data from mock database using the site value as the key
