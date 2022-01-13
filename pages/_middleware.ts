@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-export default function middleware(req: NextRequest) {
+export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
   // Get hostname (e.g. vercel.com, test.vercel.app, etc.)
   const hostname = req.headers.get('host')
+
+  // testing api calls
+  // const func = () => {
+  //   return "new string"
+  // }
+  // const x = await func()
+  // process.env.test= x
+  const env = process.env
 
   // If localhost, assign the host value manually
   // If prod, get the custom domain/subdomain value by removing the root URL
@@ -28,4 +36,6 @@ export default function middleware(req: NextRequest) {
     // the main logic component will happen in pages/sites/[site]/index.tsx
     return NextResponse.rewrite(`/_sites/${currentHost}${pathname}`)
   }
+  // console.log("-----------RUNNING MIDDLEWARE------------")
+  // console.log({ pathname, currentHost, hostname, penv: env.NEXT_PUBLIC_CHEC_PUBLIC_API_KEY, env: env.CHEC_PUBLIC_API_KEY  })
 }

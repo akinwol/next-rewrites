@@ -2,31 +2,16 @@ import React from "react";
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Layout, Page, Text, Link } from '@vercel/edge-functions-ui'
-import getData from "../../../lib/data";
-import commerce from "../../../lib/commerce"
-import { commerceClient } from "../../../lib/commerceHelper";
+import getData from "../../../../../lib/data";
+// import commerce from "../../../../../lib/commerce"
+import { commerceClient } from "../../../../../lib/commerceHelper";
 
-export default function About(props) {
+export default function ProductDetails(props) {
   // const getProducts = fetch("/api/products")
-  const { products, seo } = props;
-  console.log({ props, env: process.env.NEXT_PUBLIC_CHEC_PUBLIC_API_KEY, products })
+  const { products, seo, productData } = props;
+  console.log({ props })
 
-  const handleProd = async () => {
-    console.log("page load")
-    try {
-      const response = fetch("/api/products")
-      const productRes = await (await response).json()
-      console.log({ productRes })
-    } catch (error) {
-      console.log({ error })
-      
-    }
-  }
 
-  React.useEffect(() => {
-    console.log("effect")
-    handleProd()
-  }, [])
   const router = useRouter()
     if (router.isFallback) {
         return (
@@ -42,7 +27,7 @@ export default function About(props) {
     <Page>
       <Head>
         <title>{props.name}</title>
-        <link rel="icon" href={props.seo && props.seo.icon ? props.seo.icon : "/favicon.ico"} />
+        <link rel="icon" href="/favicon.ico" />
         <meta itemProp="description" content={props.description} />
       </Head>
       <Text variant="h1" className="mb-6">
@@ -53,7 +38,6 @@ export default function About(props) {
           Home
         </Link>
         <Link href="/about">About</Link>
-        <Link href="/products">Products</Link>
       </div>
       <Text className="mb-2">
         <b>Properties</b>: {props.description}
@@ -66,16 +50,18 @@ export default function About(props) {
       </Text>
 
       <div> 
-        <div className='text-2xl mt-8'> Products </div>
+        <div className='text-2xl mt-8'> Product Details </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4"> 
-        {products && products.map((p) => (
-            <div key={p.id} className="border-2 rounded-lg p-4">
-              <p className="text-l font-bold">{p.name}</p>
-              <img className="mt-2 h-28 w-full" src={p.assets[0]?p.assets[0].url : "" }></img>
-              <p className="mt-2"> {p.price.formatted_with_symbol}</p>
+        {productData ? (
+          <div className="border-2 rounded-lg p-4">
+              <p className="text-l font-bold">{productData.name}</p>
+              <img className="mt-2 h-28 w-full" src={productData.assets[0]?productData.assets[0].url : "" }></img>
+              <p className="mt-2"> {productData.price.formatted_with_symbol}</p>
             </div>
-
-        ))}
+        ) : (
+          <div> Sorry product doesn't exist go back </div>
+        )}
+        
 
 
          
@@ -89,7 +75,7 @@ export default function About(props) {
   )
 }
 
-About.Layout = Layout
+ProductDetails.Layout = Layout
 
 
 
@@ -105,13 +91,13 @@ export async function getStaticPaths() {
   const paths = [
     ...subdomains.map((item) => {
       // console.log({ item })
-      return { params: { site: item.subdomain } }
+      return { params: { site: item.subdomain, slug: [] } }
     }),
     ...customDomains.map((item) => {
-      return { params: { site: item.customDomain } }
+      return { params: { site: item.customDomain, slug: []  } }
     }),
   ]
-  console.log({ paths})
+  // console.log({ paths})
   return {
     paths: paths,
     fallback: 'blocking', // fallback true allows sites to be generated using ISR
@@ -120,8 +106,8 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(props) {
   const mockDB = await getData();
-  const { params: { site } } = props
-  console.log({ props })
+  const { params: { site, slug } } = props
+  console.log({ props, slug })
   // props: {
   //   params: { site: 'hostname-1' },
   //   locales: undefined,
@@ -141,13 +127,13 @@ export async function getStaticProps(props) {
   // // process.env.NEXT_PUBLIC_CHEC_PUBLIC_API_KEY = data[0].key
   const envPage = process.env.CHEC_PUBLIC_API_KEY
   const comm = await commerceClient({ key: data[0].key  });
-  const { data: products } = await comm.products.list();
+  const { data: productData } = await comm.products.list({ query: slug[0]});
   // const { data: products } = await commerce.products.list();
   // console.log({ products })
-  console.log({ envPage, data })
+  console.log({ envPage, data, productData })
   
   return {
-    props: { ...data[0], products },
+    props: { ...data[0],  productData: productData ? productData[0] : null },
     revalidate: 10, // set revalidate interval of 10s
   }
 }

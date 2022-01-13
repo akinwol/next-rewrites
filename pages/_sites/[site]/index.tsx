@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Layout, Page, Text, Link, List } from '@vercel/edge-functions-ui'
+import getData from "../../../lib/data";
 
 export default function Index(props) {
   
@@ -64,28 +65,8 @@ export default function Index(props) {
 
 Index.Layout = Layout
 
-const mockDB = [
-  {
-    name: 'Site 1',
-    description: 'Subdomain + custom domain',
-    subdomain: 'subdomain-1',
-    customDomain: 'custom-domain-1.com',
-  },
-  {
-    name: 'Site 2',
-    description: 'Subdomain only',
-    subdomain: 'subdomain-2',
-    customDomain: null,
-  },
-  {
-    name: 'Site 3',
-    description: 'Subdomain only',
-    subdomain: 'subdomain-3',
-    customDomain: null,
-  },
-]
-
 export async function getStaticPaths() {
+  const mockDB = await getData();
   // get all sites that have subdomains set up
   const subdomains = mockDB.filter((item) => item.subdomain)
 
@@ -108,6 +89,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { site } }) {
+  const mockDB = await getData();
   // check if site is a custom domain or a subdomain
   const customDomain = site.includes('.') ? true : false
 
@@ -115,6 +97,7 @@ export async function getStaticProps({ params: { site } }) {
   const data = mockDB.filter((item) =>
     customDomain ? item.customDomain == site : item.subdomain == site
   )
+  console.log({ mainPage: process.env.test })
 
   return {
     props: { ...data[0] },

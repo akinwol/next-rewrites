@@ -2,11 +2,11 @@ import React from "react";
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Layout, Page, Text, Link } from '@vercel/edge-functions-ui'
-import getData from "../../../lib/data";
-import commerce from "../../../lib/commerce"
-import { commerceClient } from "../../../lib/commerceHelper";
+import getData from "../../../../lib/data";
+// import commerce from "../../../../lib/commerce"
+import { commerceClient } from "../../../../lib/commerceHelper";
 
-export default function About(props) {
+export default function Products(props) {
   // const getProducts = fetch("/api/products")
   const { products, seo } = props;
   console.log({ props, env: process.env.NEXT_PUBLIC_CHEC_PUBLIC_API_KEY, products })
@@ -42,7 +42,7 @@ export default function About(props) {
     <Page>
       <Head>
         <title>{props.name}</title>
-        <link rel="icon" href={props.seo && props.seo.icon ? props.seo.icon : "/favicon.ico"} />
+        <link rel="icon" href="/favicon.ico" />
         <meta itemProp="description" content={props.description} />
       </Head>
       <Text variant="h1" className="mb-6">
@@ -53,26 +53,31 @@ export default function About(props) {
           Home
         </Link>
         <Link href="/about">About</Link>
-        <Link href="/products">Products</Link>
       </div>
       <Text className="mb-2">
         <b>Properties</b>: {props.description}
       </Text>
       <Text className="mb-2">
-        <b>Subdomain</b>: {props.subdomain}.vercel.sh
+        <b>Subdomain</b>: {props.subdomain}
       </Text>
       <Text className="mb-2">
         <b>Custom Domain</b>: {props.customDomain || 'none'}
       </Text>
 
       <div> 
-        <div className='text-2xl mt-8'> Products </div>
+        <div className='text-2xl mt-8'> Products Page </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4"> 
         {products && products.map((p) => (
             <div key={p.id} className="border-2 rounded-lg p-4">
               <p className="text-l font-bold">{p.name}</p>
               <img className="mt-2 h-28 w-full" src={p.assets[0]?p.assets[0].url : "" }></img>
               <p className="mt-2"> {p.price.formatted_with_symbol}</p>
+              <Link className="mr-2.5" href={`/products/${p.permalink}/${p.name.split(' ').join('-')}`}>
+              <button className="mt-2 border-2 p-3 bg-black text-white rounded-full"> 
+              Details
+              </button>
+        </Link>
+             
             </div>
 
         ))}
@@ -89,7 +94,7 @@ export default function About(props) {
   )
 }
 
-About.Layout = Layout
+Products.Layout = Layout
 
 
 
