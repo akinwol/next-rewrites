@@ -36,6 +36,7 @@ export default async function middleware(req: NextRequest) {
     // the main logic component will happen in pages/sites/[site]/index.tsx
     return NextResponse.rewrite(`/_sites/${currentHost}${pathname}`)
   }
-  // console.log("-----------RUNNING MIDDLEWARE------------")
-  // console.log({ pathname, currentHost, hostname, penv: env.NEXT_PUBLIC_CHEC_PUBLIC_API_KEY, env: env.CHEC_PUBLIC_API_KEY  })
+  console.log("-----------RUNNING MIDDLEWARE------------")
+  console.log(`/_sites/${currentHost}${pathname}`)
+  console.log({ pathname, currentHost, hostname })
 }
