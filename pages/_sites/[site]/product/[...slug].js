@@ -108,32 +108,35 @@ export async function getStaticProps(props) {
   const mockDB = await getData();
   const { params: { site, slug } } = props
   console.log({ props, slug })
-  // props: {
-  //   params: { site: 'hostname-1' },
-  //   locales: undefined,
-  //   locale: undefined,
-  //   defaultLocale: undefined
-  // }
   // check if site is a custom domain or a subdomain
-  const customDomain = site.includes('.') ? true : false
+  const customDomain = site.includes(process.env.ROOT_URL) ? false : true
+  console.log({ customDomain })
 
   // fetch data from mock database using the site value as the key
+  let updatedSite = site.replace("www.","")
+  updatedSite = site.replace(".koladae.com", "")
+  console.log({updatedSite})
   const data = mockDB.filter((item) =>
-    customDomain ? item.customDomain == site : item.subdomain == site
+    customDomain ? item.customDomain == updatedSite : item.subdomain == updatedSite
   )
+  console.log({ data })
   
   process.env.test = "blah blah2"
-  if (data.length > 0 ) process.env[`CHEC_PUBLIC_API_KEY`] = data[0].key //process.env.CHEC_PUBLIC_API_KEY = data[0].key
+  let products = null
+  if (data.length > 0 ) {
+    process.env[`CHEC_PUBLIC_API_KEY`] = data[0].key //process.env.CHEC_PUBLIC_API_KEY = data[0].key
   // // process.env.NEXT_PUBLIC_CHEC_PUBLIC_API_KEY = data[0].key
   const envPage = process.env.CHEC_PUBLIC_API_KEY
   const comm = await commerceClient({ key: data[0].key  });
   const { data: productData } = await comm.products.list({ query: slug[0]});
   // const { data: products } = await commerce.products.list();
   // console.log({ products })
+  products = productData
   console.log({ envPage, data, productData })
+  }
   
   return {
-    props: { ...data[0],  productData: productData ? productData[0] : null },
+    props: { ...data[0],  productData: products ? products[0] : null },
     revalidate: 10, // set revalidate interval of 10s
   }
 }
