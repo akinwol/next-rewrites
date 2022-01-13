@@ -2,9 +2,9 @@ import React from "react";
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Layout, Page, Text, Link } from '@vercel/edge-functions-ui'
-import getData from "../../../../../lib/data";
+import getData from "../../../../lib/data";
 // import commerce from "../../../../../lib/commerce"
-import { commerceClient } from "../../../../../lib/commerceHelper";
+import { commerceClient } from "../../../../lib/commerceHelper";
 
 export default function ProductDetails(props) {
   // const getProducts = fetch("/api/products")
