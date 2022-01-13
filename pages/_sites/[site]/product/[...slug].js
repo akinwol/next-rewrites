@@ -91,10 +91,10 @@ export async function getStaticPaths() {
   const paths = [
     ...subdomains.map((item) => {
       // console.log({ item })
-      return { params: { site: item.subdomain, slug: [] } }
+      return { params: { site: item.subdomain, slug: ["404", "404"] } }
     }),
     ...customDomains.map((item) => {
-      return { params: { site: item.customDomain, slug: []  } }
+      return { params: { site: item.customDomain, slug: ["404", "404"]  } }
     }),
   ]
   // console.log({ paths})
